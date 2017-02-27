@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		.box {
+    background-color: gray;
+    height: 200px;
+    width: 250px;
+    margin-top: 120px;
+    margin-left: 500px;
+    border: 1px ridge #aaa;
+    box-shadow: 10px 10px 10px #616161;
+}
+
+img {
+    width: 6em;
+}
+	</style>
+</head>
+
+
+<script>
+var compteur = 0;
+
+function dragenter(e) {
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function test(fichier)
+{
+
+	var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    var canvaswidth = canvas.width;
+    var canvasheight = canvas.height;
+    // Draw photo
+   var image = new Image();
+	image.onload = function() { ctx.drawImage(image, 0, 0); };
+
+
+    ctx.drawImage(idimg.src, 0, 0, canvaswidth, canvasheight);
+
+}
+
+function drop(e) {
+    if (!e) {
+        var fichier = document.getElementById('fileinput').files;
+    }
+    else {
+        var fichier = e.dataTransfer.files;
+    }
+
+    chacharge(fichier)
+}
+
+
+function chacharge(fichier) {
+
+    if (fichier[0].type.match('image.*')) {
+        var construction = document.createElement('img');
+        var elmage = document.body.appendChild(construction);
+        var charge = new FileReader();
+
+        charge.readAsDataURL(fichier[0]);
+
+        charge.onloadend = function(e){
+            elmage.src = e.target.result;
+            //idimg.src = e.target.result;
+            idimg.src = elmage.src;
+
+
+	var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    var canvaswidth = canvas.width;
+    var canvasheight = canvas.height;
+
+    ctx.drawImage(elmage, 0, 0, canvaswidth, canvasheight);
+
+
+            if (compteur < fichier.length-1) {
+                compteur++;
+                chacharge(fichier);
+            } else {
+                compteur = 0;
+            }
+        }
+    } else {
+        if (compteur<fichier.length-1) {
+            compteur++;
+            test();
+            chacharge(fichier);
+        }
+    }
+}
+</script>
+
+<body>
+<div  id="div_canvas\"><canvas style="display:inline; border: 1px black;" width="480px" height="360px"  id="canvas"></canvas></div>
+<div class="box" ondragenter="this.textContent = ''; dragenter(event)" ondragover="dragenter(event)" ondrop="dragenter(event); drop(event);">deplacez les elements à cet endroit.</div>
+<button onclick="test();">canvas</button>
+<input type="file" id="fileinput" multiple="multiple" onchange="drop()">
+<img id="idimg" src=""></body<img>
+
+</body>
+</html>
